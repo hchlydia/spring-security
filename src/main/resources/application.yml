@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: MySpringSecurity
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/mymovie?serverTimezone=Asia/Taipei&characterEncoding=utf-8
+    username: XXX
+    password: XXX
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+      database-platform: org.hibernate.dialect.MySQLDialect
+      hibernate:
+        ddl-auto: update
+      show-sql: true
