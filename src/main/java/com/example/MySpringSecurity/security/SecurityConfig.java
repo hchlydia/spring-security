@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/movie/upload").hasAnyRole(MOVIE_MANAGER, ADMIN)
                         .requestMatchers(HttpMethod.DELETE, "/movie/delete").hasAnyRole(MOVIE_MANAGER, ADMIN)
 
+                        .requestMatchers(HttpMethod.POST, "/subscribe", "/unsubscribe").hasAnyRole(NORMAL_MEMBER, ADMIN)
+
                         .anyRequest().denyAll()) //deny by default
 
                 .build();

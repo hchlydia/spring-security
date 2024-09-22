@@ -39,7 +39,7 @@ public class MemberServiceImpl implements MemberService {
         member = memberRepository.save(member);
 
         //為新註冊會員新增預設的role
-        Role normalRole = roleRepository.findByRoleName("ROLE_NORMAL_MEMBER")
+        Role normalRole = roleRepository.findByRoleName(Role.NORMAL_MEMBER)
                 .orElseThrow(() -> new RuntimeException("NORMAL_MEMBER權限不存在"));
 
         MemberHasRole memberHasRole = new MemberHasRole();

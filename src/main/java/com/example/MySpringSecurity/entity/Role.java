@@ -19,4 +19,9 @@ public class Role implements Serializable {
 
     @Column(name = "role_name")
     private String roleName;
+
+    public static final String ADMIN = "ROLE_ADMIN";
+    public static final String NORMAL_MEMBER = "ROLE_NORMAL_MEMBER";
+    public static final String VIP_MEMBER = "ROLE_VIP_MEMBER";
+    public static final String MOVIE_MANAGER = "ROLE_MOVIE_MANAGER";
 }
