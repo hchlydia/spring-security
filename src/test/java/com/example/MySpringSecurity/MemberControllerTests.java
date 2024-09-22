@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +53,8 @@ class MemberControllerTests {
 		// 新帳號可以觀看免費電影
 		RequestBuilder freeRequestBuilder = MockMvcRequestBuilders
 				.post("/movie/free")
-				.with(httpBasic("test1@gmail.com", "111"));
+				.with(httpBasic("test1@gmail.com", "111"))
+				.with(csrf());
 
 		mockMvc.perform(freeRequestBuilder)
 				.andExpect(status().isOk());
