@@ -11,6 +11,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -34,7 +41,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
 
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) //在Cookie裡面回傳XSRF-TOKEN的值給前端
+                        .csrfTokenRequestHandler(createCsrfHandler())
+                        .ignoringRequestMatchers("/register", "/userLogin") //關閉這些API的CSRF防禦，這樣前端不用帶上X-XSRF-TOKEN也可以成功請求
+                )
+
+                .cors(cors -> cors
+                        .configurationSource(createCorsConfig()))
 
                 .addFilterBefore(new Filter(), BasicAuthenticationFilter.class)
 
@@ -56,5 +70,26 @@ public class SecurityConfig {
                         .anyRequest().denyAll()) //deny by default
 
                 .build();
+    }
+
+    private CsrfTokenRequestAttributeHandler createCsrfHandler() {
+        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+        csrfHandler.setCsrfRequestAttributeName(null);
+
+        return csrfHandler;
+    }
+
+    private CorsConfigurationSource createCorsConfig() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:8080"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("*"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }
