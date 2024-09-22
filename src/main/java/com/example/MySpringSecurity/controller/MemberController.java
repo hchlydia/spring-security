@@ -28,7 +28,7 @@ public class MemberController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody MemberVo vo) {
+    public ResponseEntity<Map<String, Object>> register(@RequestBody MemberVo vo) throws Exception {
         String hashedPassword = passwordEncoder.encode(vo.getPassword());
         vo.setPassword(hashedPassword);
 

@@ -5,5 +5,5 @@ import com.example.MySpringSecurity.vo.MemberVo;
 
 public interface MemberService {
 
-    Member create(MemberVo vo);
+    Member create(MemberVo vo) throws Exception;
 }
