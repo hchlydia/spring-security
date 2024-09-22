@@ -2,6 +2,7 @@ package com.example.MySpringSecurity.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,10 +10,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final String ADMIN = "ADMIN";
+    private static final String NORMAL_MEMBER = "NORMAL_MEMBER";
+    private static final String VIP_MEMBER = "VIP_MEMBER";
+    private static final String MOVIE_MANAGER = "MOVIE_MANAGER";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,6 +35,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
 
                 .csrf(csrf -> csrf.disable())
+
+                .addFilterBefore(new Filter(), BasicAuthenticationFilter.class)
+
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
@@ -35,7 +45,15 @@ public class SecurityConfig {
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/userLogin").authenticated()
 
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/movie").hasAnyRole(NORMAL_MEMBER, MOVIE_MANAGER, ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/movie/free").hasAnyRole(NORMAL_MEMBER, ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/movie/vip").hasAnyRole(VIP_MEMBER, ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/movie/upload").hasAnyRole(MOVIE_MANAGER, ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, "/movie/delete").hasAnyRole(MOVIE_MANAGER, ADMIN)
+
+                        .requestMatchers(HttpMethod.POST, "/subscribe", "/unsubscribe").hasAnyRole(NORMAL_MEMBER, ADMIN)
+
+                        .anyRequest().denyAll()) //deny by default
 
                 .build();
     }

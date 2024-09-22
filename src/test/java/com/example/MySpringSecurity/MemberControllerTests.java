@@ -1,7 +1,6 @@
 package com.example.MySpringSecurity;
 
 import com.example.MySpringSecurity.entity.Member;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class MySpringSecurityApplicationTests {
+class MemberControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -48,6 +47,14 @@ class MySpringSecurityApplicationTests {
 				.with(httpBasic("test1@gmail.com", "111"));
 
 		mockMvc.perform(loginRequestBuilder)
+				.andExpect(status().isOk());
+
+		// 新帳號可以觀看免費電影
+		RequestBuilder freeRequestBuilder = MockMvcRequestBuilders
+				.post("/movie/free")
+				.with(httpBasic("test1@gmail.com", "111"));
+
+		mockMvc.perform(freeRequestBuilder)
 				.andExpect(status().isOk());
 	}
 
