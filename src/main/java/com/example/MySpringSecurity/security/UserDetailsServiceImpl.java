@@ -1,4 +1,4 @@
-package com.example.MySpringSecurity.service.impl;
+package com.example.MySpringSecurity.security;
 
 import com.example.MySpringSecurity.entity.Member;
 import com.example.MySpringSecurity.entity.Role;
